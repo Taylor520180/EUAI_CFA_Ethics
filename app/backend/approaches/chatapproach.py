@@ -108,8 +108,9 @@ class ChatApproach(Approach, ABC):
         for message in newest_to_oldest:
             potential_message_count = message_builder.count_tokens_for_message(message)
             if (total_token_count + potential_message_count) > max_tokens:
-                logging.debug("Reached max tokens of %d, history will be truncated", max_tokens)
-                break
+                del history[0]
+                total_token_count -= message_builder.count_tokens_for_message(history[0])
+                
             message_builder.insert_message(message["role"], message["content"], index=append_index)
             total_token_count += potential_message_count
         return message_builder.messages
