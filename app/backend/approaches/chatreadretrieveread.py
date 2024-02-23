@@ -163,6 +163,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         response_token_limit = 1024
         messages_token_limit = self.chatgpt_token_limit - response_token_limit
+
+         # Remove earliest messages until token limit is satisfied
+        while sum(len(msg["content"].split()) for msg in history) > messages_token_limit:
+            del history[0]
+            
         messages = self.get_messages_from_history(
             system_prompt=system_message,
             model_id=self.chatgpt_model,
