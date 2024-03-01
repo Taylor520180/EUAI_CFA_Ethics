@@ -12,7 +12,7 @@ def chat_approach():
         search_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-35-turbo-16k",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model="text-",
@@ -44,7 +44,7 @@ def test_get_search_query_returns_default(chat_approach):
 def test_get_messages_from_history(chat_approach):
     messages = chat_approach.get_messages_from_history(
         system_prompt="You are a bot.",
-        model_id="gpt-35-turbo",
+        model_id="gpt-35-turbo-16k",
         history=[
             {"role": "user", "content": "What happens in a performance review?"},
             {
@@ -70,7 +70,7 @@ def test_get_messages_from_history(chat_approach):
 def test_get_messages_from_history_truncated(chat_approach):
     messages = chat_approach.get_messages_from_history(
         system_prompt="You are a bot.",
-        model_id="gpt-35-turbo",
+        model_id="gpt-35-turbo-16k",
         history=[
             {"role": "user", "content": "What happens in a performance review?"},
             {
@@ -91,7 +91,7 @@ def test_get_messages_from_history_truncated(chat_approach):
 def test_get_messages_from_history_truncated_longer(chat_approach):
     messages = chat_approach.get_messages_from_history(
         system_prompt="You are a bot.",  # 8 tokens
-        model_id="gpt-35-turbo",
+        model_id="gpt-35-turbo-16k",
         history=[
             {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
             {
@@ -123,7 +123,7 @@ def test_get_messages_from_history_truncated_break_pair(chat_approach):
     """Tests that the truncation breaks the pair of messages."""
     messages = chat_approach.get_messages_from_history(
         system_prompt="You are a bot.",  # 8 tokens
-        model_id="gpt-35-turbo",
+        model_id="gpt-35-turbo-16k",
         history=[
             {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
             {
