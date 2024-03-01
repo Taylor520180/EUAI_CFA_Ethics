@@ -59,37 +59,3 @@ def get_oai_chatmodel_tiktok(aoaimodel: str) -> str:
     if aoaimodel not in AOAI_2_OAI and aoaimodel not in MODELS_2_TOKEN_LIMITS:
         raise ValueError(message)
     return AOAI_2_OAI.get(aoaimodel) or aoaimodel
-
-client = AzureOpenAI(
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version="2023-12-01",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")  # Your Azure OpenAI resource's endpoint value.
-)
-
-system_message = {"role": "system", "content": "You are a helpful assistant."}
-max_response_tokens = 250
-token_limit = 4096
-conversation = []
-conversation.append(system_message)
-
-# 用户输入循环
-while True:
-    user_input = input("Q:")
-    conversation.append({"role": "user", "content": user_input})
-    
-    # 检查是否超过令牌限制，如果是，则删除最早的历史对话消息
-    while num_tokens_from_messages(conversation, "gpt-35-turbo-16k") > token_limit:
-        del conversation[1]
-
-    # 生成助手的回复
-    response = client.chat.completions.create(
-        model="gpt-35-turbo-16k",  # 模型 = "deployment_name".
-        messages=conversation,
-        temperature=0.7,
-        max_tokens=max_response_tokens
-    )
-
-    # 将助手的回复添加到对话中并显示
-    assistant_response = response.choices[0].message.content
-    conversation.append({"role": "assistant", "content": assistant_response})
-    print("\n" + assistant_response + "\n")
