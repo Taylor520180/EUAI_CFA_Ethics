@@ -310,7 +310,7 @@ async def setup_clients():
 
         # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
+            api_version="2023-12-01",
             azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
         )
