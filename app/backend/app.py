@@ -295,7 +295,7 @@ async def setup_clients():
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
         # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
+            api_version="2023-12-01",
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
         )
