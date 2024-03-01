@@ -161,12 +161,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 if url:
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
-
-          # Remove earliest messages until token limit is satisfied
-        total_token_count = 0
-        while history and total_token_count + len(history[0]["content"].split()) > messages_token_limit:
-            total_token_count -= len(history[0]["content"].split())
-            del history[0]
             
         messages = self.get_messages_from_history(
             system_prompt=system_message,
