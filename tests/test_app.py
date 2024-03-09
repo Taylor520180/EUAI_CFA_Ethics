@@ -90,7 +90,7 @@ async def test_ask_handle_exception(client, monkeypatch, snapshot, caplog):
 
     response = await client.post(
         "/ask",
-        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+        json={"messages": [{"content": "What is Mosaic Theory?", "role": "user"}]},
     )
     assert response.status_code == 500
     result = await response.get_json()
@@ -107,7 +107,7 @@ async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot,
 
     response = await client.post(
         "/ask",
-        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+        json={"messages": [{"content": "Can you provide guidance on handling conflicts of interest?", "role": "user"}]},
     )
     assert response.status_code == 400
     result = await response.get_json()
@@ -120,7 +120,7 @@ async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
@@ -137,7 +137,7 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
         "/ask",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "WWhat is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
@@ -162,7 +162,7 @@ async def test_ask_rtr_text_semanticranker(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
             },
@@ -178,7 +178,7 @@ async def test_ask_rtr_text_semanticcaptions(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "semantic_captions": True},
             },
@@ -194,7 +194,7 @@ async def test_ask_rtr_hybrid(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "hybrid"},
             },
@@ -222,7 +222,7 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 
     response = await client.post(
         "/chat",
-        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+        json={"messages": [{"content": "What is Mosaic Theory?", "role": "user"}]},
     )
     assert response.status_code == 500
     result = await response.get_json()
@@ -239,7 +239,7 @@ async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot
 
     response = await client.post(
         "/chat",
-        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+        json={"messages": [{"content": "Can you provide guidance on handling conflicts of interest?", "role": "user"}]},
     )
     assert response.status_code == 400
     result = await response.get_json()
@@ -256,7 +256,7 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
 
     response = await client.post(
         "/chat",
-        json={"messages": [{"content": "What is the capital of France?", "role": "user"}], "stream": True},
+        json={"messages": [{"content": "What is Mosaic Theory?", "role": "user"}], "stream": True},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: something bad happened" in caplog.text
@@ -271,7 +271,7 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
 
     response = await client.post(
         "/chat",
-        json={"messages": [{"content": "How do I do something bad?", "role": "user"}], "stream": True},
+        json={"messages": [{"content": "Can you provide guidance on handling conflicts of interest?", "role": "user"}], "stream": True},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: The response was filtered" in caplog.text
@@ -284,7 +284,7 @@ async def test_chat_text(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
@@ -301,7 +301,7 @@ async def test_chat_text_filter(auth_client, snapshot):
         "/chat",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
@@ -326,7 +326,7 @@ async def test_chat_text_semanticranker(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
             },
@@ -342,7 +342,7 @@ async def test_chat_text_semanticcaptions(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "semantic_captions": True},
             },
@@ -358,7 +358,7 @@ async def test_chat_prompt_template(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "prompt_template": "You are a cat."},
             },
@@ -374,7 +374,7 @@ async def test_chat_prompt_template_concat(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Meow like a cat."},
             },
@@ -390,7 +390,7 @@ async def test_chat_hybrid(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "hybrid"},
             },
@@ -406,7 +406,7 @@ async def test_chat_vector(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "vector"},
             },
@@ -423,7 +423,7 @@ async def test_chat_stream_text(client, snapshot):
         "/chat",
         json={
             "stream": True,
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
@@ -441,7 +441,7 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
         headers={"Authorization": "Bearer MockToken"},
         json={
             "stream": True,
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
@@ -467,12 +467,12 @@ async def test_chat_with_history(client, snapshot):
         "/chat",
         json={
             "messages": [
-                {"content": "What happens in a performance review?", "role": "user"},
+                {"content": "What is Mosaic Theory?", "role": "user"},
                 {
-                    "content": "During a performance review, employees will receive feedback on their performance over the past year, including both successes and areas for improvement. The feedback will be provided by the employee's supervisor and is intended to help the employee develop and grow in their role [employee_handbook-3.pdf]. The review is a two-way dialogue between the employee and their manager, so employees are encouraged to be honest and open during the process [employee_handbook-3.pdf]. The employee will also have the opportunity to discuss their goals and objectives for the upcoming year [employee_handbook-3.pdf]. A written summary of the performance review will be provided to the employee, which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                    "content": "Good question! Mosaic Theory refers to .... In summary, Mosaic Theory is about...",
                     "role": "assistant",
                 },
-                {"content": "Is dental covered?", "role": "user"},
+                {"content": "Can you show me an example", "role": "user"},
             ],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
@@ -481,7 +481,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "performance review")
+    assert thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Mosaic Theory")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -493,13 +493,13 @@ async def test_chat_with_long_history(client, snapshot, caplog):
         "/chat",
         json={
             "messages": [
-                {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
+                {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"}, 
                 {
                     "role": "assistant",
-                    "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]"
+                    "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report."
                     * 150,
                 },  # 3900 tokens
-                {"role": "user", "content": "What does a product manager do?"},  # 10 tokens
+                {"role": "user", "content": "Can you provide me with a quiz"},
             ],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
@@ -509,7 +509,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Is there a dress code?")
+    assert not thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Can you show me an example related to Mosaic Theory?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -519,7 +519,7 @@ async def test_chat_session_state_persists(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
@@ -536,7 +536,7 @@ async def test_chat_stream_session_state_persists(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
@@ -554,7 +554,7 @@ async def test_chat_followup(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"suggest_followup_questions": True},
             },
@@ -562,7 +562,7 @@ async def test_chat_followup(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["choices"][0]["context"]["followup_questions"][0] == "What is the capital of Spain?"
+    assert result["choices"][0]["context"]["followup_questions"][0] == "Can you show me an example related to Mosaic Theory?"
 
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -573,7 +573,7 @@ async def test_chat_stream_followup(client, snapshot):
         "/chat",
         json={
             "stream": True,
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
                 "overrides": {"suggest_followup_questions": True},
             },
@@ -589,7 +589,7 @@ async def test_chat_vision(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "messages": [{"content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?", "role": "user"}],
             "context": {
                 "overrides": {
                     "use_gpt4v": True,
@@ -609,7 +609,7 @@ async def test_chat_vision_vectors(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "messages": [{"content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?", "role": "user"}],
             "context": {
                 "overrides": {
                     "use_gpt4v": True,
@@ -630,7 +630,7 @@ async def test_ask_vision(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "messages": [{"content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?", "role": "user"}],
             "context": {
                 "overrides": {
                     "use_gpt4v": True,
