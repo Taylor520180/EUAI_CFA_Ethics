@@ -24,7 +24,7 @@ def chat_approach():
 
 
 def test_get_search_query(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"this is the query","role":"assistant","function_call":{"name":"search_sources","arguments":"{\\n\\"search_query\\":\\"accesstelemedicineservices\\"\\n}"}},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo-16k","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"this is the query","role":"assistant","function_call":{"name":"search_sources","arguments":"{\\n\\"search_query\\":\\"accesstelemedicineservices\\"\\n}"}},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
@@ -33,7 +33,7 @@ def test_get_search_query(chat_approach):
 
 
 def test_get_search_query_returns_default(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo-16k","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
@@ -46,134 +46,134 @@ def test_get_messages_from_history(chat_approach):
         system_prompt="You are a bot.",
         model_id="gpt-35-turbo-16k",
         history=[
-            {"role": "user", "content": "What happens in a performance review?"},
+            {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},
             {
                 "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
             },
-            {"role": "user", "content": "What does a Product Manager do?"},
+            {"role": "user", "content": "Can you provide me with a quiz"},
         ],
-        user_content="What does a Product Manager do?",
+        user_content="Can you provide me with a quiz?",
         max_tokens=3000,
     )
     assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "What happens in a performance review?"},
+        {"role": "system", "content": "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding."},
+        {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},
         {
             "role": "assistant",
-            "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+            "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
         },
-        {"role": "user", "content": "What does a Product Manager do?"},
+        {"role": "user", "content": "Can you provide me with a quiz?"},
     ]
 
 
 def test_get_messages_from_history_truncated(chat_approach):
     messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",
+        system_prompt="Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding.",
         model_id="gpt-35-turbo-16k",
         history=[
-            {"role": "user", "content": "What happens in a performance review?"},
+            {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},
             {
                 "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
             },
-            {"role": "user", "content": "What does a Product Manager do?"},
+            {"role": "user", "content": "Can you provide me with a quiz?"},
         ],
-        user_content="What does a Product Manager do?",
+        user_content="Can you provide me with a quiz?",
         max_tokens=10,
     )
     assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "What does a Product Manager do?"},
+        {"role": "system", "content": "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding."},
+        {"role": "user", "content": "Can you provide me with a quiz?"},
     ]
 
 
 def test_get_messages_from_history_truncated_longer(chat_approach):
     messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",  # 8 tokens
+        system_prompt="Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding.",  # 8 tokens
         model_id="gpt-35-turbo-16k",
         history=[
-            {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
+            {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},  
             {
                 "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-            },  # 102 tokens
-            {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
+                "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
+            },  
+            {"role": "user", "content": "Can you provide me with a quiz"}, 
             {
                 "role": "assistant",
-                "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
-            },  # 26 tokens
-            {"role": "user", "content": "What does a Product Manager do?"},  # 10 tokens
+                "content": "Sure! Ready for the challenge?\n\nThe mosaic theory holds that an analyst:\nAnswer Choices:\nA. Violates the Code and Standards if the analyst fails to have knowledge of and comply with applicable laws.\nB. Can use material public information and non-material nonpublic information in the analyst’s analysis.\nC.Should use all available and relevant information in support of an investment recommendation.\"\n\nWhich is the correct answer?",
+            },  
+            {"role": "user", "content": "Answer B"}, 
         ],
-        user_content="What does a Product Manager do?",
+        user_content="Answer B",
         max_tokens=55,
     )
     assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "Is there a dress code?"},
+        {"role": "system", "content": "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding."},
+        {"role": "user", "content": "Can you provide me with a quiz related to Mosaic Theory?"},
         {
             "role": "assistant",
-            "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
+            "content": "Sure! Ready for the challenge?\n\nThe mosaic theory holds that an analyst:\nAnswer Choices:\nA. Violates the Code and Standards if the analyst fails to have knowledge of and comply with applicable laws.\nB. Can use material public information and non-material nonpublic information in the analyst’s analysis.\nC.Should use all available and relevant information in support of an investment recommendation.\"\n\nWhich is the correct answer?",
         },
-        {"role": "user", "content": "What does a Product Manager do?"},
+        {"role": "user", "content": "Answer B"},
     ]
 
 
 def test_get_messages_from_history_truncated_break_pair(chat_approach):
     """Tests that the truncation breaks the pair of messages."""
     messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",  # 8 tokens
+        system_prompt="Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding.",  # 8 tokens
         model_id="gpt-35-turbo-16k",
         history=[
-            {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
+            {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},  # 10 tokens
             {
                 "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
             },  # 102 tokens
-            {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
+            {"role": "user", "content": "Can you provide me with a quiz related to Mosaic Theory?"},  # 9 tokens
             {
                 "role": "assistant",
-                "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
+                "content": "Sure! Ready for the challenge?\n\nThe mosaic theory holds that an analyst:\nAnswer Choices:\nA. Violates the Code and Standards if the analyst fails to have knowledge of and comply with applicable laws.\nB. Can use material public information and non-material nonpublic information in the analyst’s analysis.\nC.Should use all available and relevant information in support of an investment recommendation.\"\n\nWhich is the correct answer?",
             },  # 26 tokens
-            {"role": "user", "content": "What does a Product Manager do?"},  # 10 tokens
+            {"role": "user", "content": "Answer B"},  # 10 tokens
         ],
-        user_content="What does a Product Manager do?",
+        user_content="Answer B",
         max_tokens=147,
     )
     assert messages == [
-        {"role": "system", "content": "You are a bot."},
+        {"role": "system", "content": "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding."},
         {
             "role": "assistant",
-            "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+            "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report.",
         },
-        {"role": "user", "content": "Is there a dress code?"},
+        {"role": "user", "content": "Can you provide me with a quiz related to Mosaic Theory?"},
         {
             "role": "assistant",
-            "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
+            "content": "Sure! Ready for the challenge?\n\nThe mosaic theory holds that an analyst:\nAnswer Choices:\nA. Violates the Code and Standards if the analyst fails to have knowledge of and comply with applicable laws.\nB. Can use material public information and non-material nonpublic information in the analyst’s analysis.\nC.Should use all available and relevant information in support of an investment recommendation.\"\n\nWhich is the correct answer?",
         },
-        {"role": "user", "content": "What does a Product Manager do?"},
+        {"role": "user", "content": "Answer B"},
     ]
 
 
 def test_extract_followup_questions(chat_approach):
-    content = "Here is answer to your question.<<What is the dress code?>>"
+    content = "Here is answer to your question.<<"What is Mosaic Theory?>>"
     pre_content, followup_questions = chat_approach.extract_followup_questions(content)
     assert pre_content == "Here is answer to your question."
-    assert followup_questions == ["What is the dress code?"]
+    assert followup_questions == [""What is Mosaic Theory?"]
 
 
 def test_extract_followup_questions_three(chat_approach):
     content = """Here is answer to your question.
 
-<<What are some examples of successful product launches they should have experience with?>>
-<<Are there any specific technical skills or certifications required for the role?>>
-<<Is there a preference for candidates with experience in a specific industry or sector?>>"""
+<<Can you show me an example related to Mosaic Theory?>>
+<<Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?>>
+<<I still don't understand.>>"""
     pre_content, followup_questions = chat_approach.extract_followup_questions(content)
     assert pre_content == "Here is answer to your question.\n\n"
     assert followup_questions == [
-        "What are some examples of successful product launches they should have experience with?",
-        "Are there any specific technical skills or certifications required for the role?",
-        "Is there a preference for candidates with experience in a specific industry or sector?",
+        "Can you show me an example related to Mosaic Theory?",
+        "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?",
+        "I still don't understand.",
     ]
 
 
@@ -185,14 +185,14 @@ def test_extract_followup_questions_no_followup(chat_approach):
 
 
 def test_extract_followup_questions_no_pre_content(chat_approach):
-    content = "<<What is the dress code?>>"
+    content = "<<What is Mosaic Theory?>>"
     pre_content, followup_questions = chat_approach.extract_followup_questions(content)
     assert pre_content == ""
-    assert followup_questions == ["What is the dress code?"]
+    assert followup_questions == ["What is Mosaic Theory?"]
 
 
 def test_get_messages_from_history_few_shots(chat_approach):
-    user_query_request = "What does a Product manager do?"
+    user_query_request = "Can you show me an example related to Mosaic Theory?"
     messages = chat_approach.get_messages_from_history(
         system_prompt=chat_approach.query_prompt_template,
         model_id=chat_approach.chatgpt_model,
