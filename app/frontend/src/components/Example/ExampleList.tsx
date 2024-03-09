@@ -3,14 +3,14 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "Explain to me what is Soft Dollar Arrangement?",
-    "Tell me what is Mosaic Theory in the investment industry?",
+    "Explain to me what Soft Dollar Arrangement is?",
+    "What is Mosaic Theory in the investment industry?",
     "Give me an example of material non-public information."
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "Explain to me what is Soft Dollar Arrangement?",
-    "Tell me what is Mosaic Theory in the investment industry?",
+    "Explain to me what Soft Dollar Arrangement is?",
+    "What is Mosaic Theory in the investment industry?",
     "Give me an example of material non-public information."
 ];
 
