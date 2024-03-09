@@ -28,7 +28,7 @@ def test_num_tokens_from_messages():
         # 1 token : 5 tokens
         "content": "Hello, how are you?",
     }
-    model = "gpt-35-turbo"
+    model = "gpt-35-turbo-16k"
     assert num_tokens_from_messages(message, model) == 9
 
 
