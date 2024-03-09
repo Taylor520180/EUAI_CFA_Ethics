@@ -35,9 +35,9 @@ class RetrieveThenReadApproach(Approach):
 'What is Mosaic Theory?'
 
 Sources:
-info1.pdf: Mosaic Theory is under Standard II(A) Material Nonpublic Information.
-info2.pdf: Mosaic Theory involves using public and nonmaterial nonpublic information.
-info3.pdf: Using public and nonmaterial nonpublic information is not a violation.
+Ethics Handbook.pdf: Mosaic Theory is under Standard II(A) Material Nonpublic Information.
+Ethics Handbook.pdf: Mosaic Theory involves using public and nonmaterial nonpublic information.
+Ethics Handbook.pdf: Using public and nonmaterial nonpublic information is not a violation.
 """
     answer = "Good questions! Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation."
    
