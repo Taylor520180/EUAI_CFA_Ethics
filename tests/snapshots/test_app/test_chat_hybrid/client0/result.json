@@ -4,17 +4,17 @@
             "context": {
                 "data_points": {
                     "text": [
-                        "Benefit_Options-2.pdf: There is a whistleblower policy."
+                        "Ethics Handbook-76.pdf: Under Mosaic Theory, the analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions."
                     ]
                 },
                 "thoughts": [
                     {
-                        "description": "What is the capital of France?",
+                        "description": "What is Mosaic Theory?",
                         "props": null,
                         "title": "Original user query"
                     },
                     {
-                        "description": "capital of France",
+                        "description": "Mosaic Theory",
                         "props": {
                             "has_vector": true,
                             "use_semantic_captions": false
@@ -28,18 +28,18 @@
                                     {
                                         "additional_properties": {},
                                         "highlights": [],
-                                        "text": "Caption: A whistleblower policy."
+                                        "text": "Caption: Under Mosaic Theory, the analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions."
                                     }
                                 ],
                                 "category": null,
-                                "content": "There is a whistleblower policy.",
+                                "content": "Under Mosaic Theory, the analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions.",
                                 "embedding": null,
                                 "groups": null,
-                                "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                                "id": "file-Ethics Handbook_pdf-42656E656669745F4F7074696F6E732E706466-page-76",
                                 "imageEmbedding": null,
                                 "oids": null,
-                                "sourcefile": "Benefit_Options.pdf",
-                                "sourcepage": "Benefit_Options-2.pdf"
+                                "sourcefile": "Ethics Handbook.pdf",
+                                "sourcepage": "Ethics Handbook-76.pdf"
                             }
                         ],
                         "props": null,
@@ -47,8 +47,8 @@
                     },
                     {
                         "description": [
-                            "{'role': 'system', 'content': \"Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.\\n        Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.\\n        For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.\\n        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\\n        \\n        \\n        \"}",
-                            "{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
+                            "{'role': 'system', 'content': \"Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding. Use 'you' to refer to the individual asking the questions even if they ask with 'I'. Answer the following question using only the data provided in the sources below. For tabular information return it as an html table. Do not return markdown format. Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. If you cannot answer using the sources below, say you don't know. Use below example to answer\"}",
+                            "{'role': 'user', 'content': \"\\n'What is Mosaic Theory?'\\n\\nSources:\\nEthics Handbook.pdf: Mosaic Theory is under Standard II(A) Material Nonpublic Information.\\nEthics Handbook.pdf: Mosaic Theory involves using public and nonmaterial nonpublic information.\\nEthics Handbook.pdf: Using public and nonmaterial nonpublic information is not a violation.\\n\"}"
                         ],
                         "props": null,
                         "title": "Prompt"
@@ -58,7 +58,7 @@
             "finish_reason": "stop",
             "index": 0,
             "message": {
-                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "content": "Good questions! Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation.",
                 "function_call": null,
                 "role": "assistant",
                 "tool_calls": null
