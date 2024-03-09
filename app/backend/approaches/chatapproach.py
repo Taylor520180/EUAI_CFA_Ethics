@@ -21,18 +21,22 @@ class ChatApproach(Approach, ABC):
     ASSISTANT = "assistant"
 
     query_prompt_few_shots = [
-        {"role": USER, "content": "How did crypto do last year?"},
-        {"role": ASSISTANT, "content": "Summarize Cryptocurrency Market Dynamics from last year"},
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
+        {"role": USER, "content": "What is Mosaic Theory?"},
+        {"role": ASSISTANT, "content": "Good question! Mosaic Theory refers to .... In summary, Mosaic Theory is about..."},
+        {"role": USER, "content": "Can you show me an example related to Mosaic Theory?"},
+        {"role": ASSISTANT, "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report."},
+        {"role": USER, "content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?"},
+        {"role": ASSISTANT, "content": "Sure! Ready for the challenge?\n\nUnder the Code and Standards, which of the following investment risks is least likely required to be disclosed to clients?\nAnswer Choices:\nA. the use of leverage as part of the investment strategy.\nB. risks that are unknown to the investment adviser at the time of the recommendation.\nC.general market-related risks.\"\n\nWhich is the correct answer?"},
+        {"role": USER, "content": "I still don't understand."},
+        {"role": ASSISTANT, "content": "No worries! Let me give you a more concrete example to make it clearer. Imaging. you are .... Does it sound clear to you now? Free to ask if you have more questions."},
     ]
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<Are there exclusions for prescriptions?>>
-    <<Which pharmacies can be ordered from?>>
-    <<What is the limit for over-the-counter medication?>>
+    <<Can you give me some examples?>>
+    <<Can you give me a quiz related to this?>>
+    <<I still don't quite get it?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """
