@@ -36,7 +36,7 @@ class ChatApproach(Approach, ABC):
     Enclose the follow-up questions in double angle brackets. Example:
     <<Can you give me some examples?>>
     <<Can you give me a quiz related to this?>>
-    <<I still don't quite get it?>>
+    <<I still don't quite get it.>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """
