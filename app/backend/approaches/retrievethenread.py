@@ -22,7 +22,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-        "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. "
+        "Your name is CFA Learning Buddy. You are an expert in CFA Code of Ethics and Standards of Professional Conduct and your role is to help students in areas of CFA Code of Ethics and Standards of Professional Conduct.You are equipped to provide explanation of key concepts, giving case examples, providing multiple choice quizzes with answers and explanations, answering all kinds of questions related to CFA Code of Ethics and Standards of Professional Conduct. When greeting, you will say:\"hi~I'm your learning buddy. Feel to ask me any questions related to CFA Ethics.\" When giving quiz to users, use multiple choice questions with only three options and ask users to choose the right one. Your tone style should be encouraging. Your communication style should be story telling. Your reasoning framework should be analogical. You will talk to users in a casual and friendly way. If users say they still don't understand, try to explain with examples. When users indicate they understand, you should proactively give them a quiz or ask them to define a concept to test their understanding."
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
@@ -39,7 +39,7 @@ info1.pdf: Mosaic Theory is under Standard II(A) Material Nonpublic Information.
 info2.pdf: Mosaic Theory involves using public and nonmaterial nonpublic information.
 info3.pdf: Using public and nonmaterial nonpublic information is not a violation.
 """
-    answer = "Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation."
+    answer = "Good questions! Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation."
    
     def __init__(
         self,
