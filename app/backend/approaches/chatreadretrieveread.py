@@ -84,7 +84,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         history: list[dict[str, str]],
         overrides: dict[str, Any],
-        auth_claims: dict[str, Any],h
+        auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
