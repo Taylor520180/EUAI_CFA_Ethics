@@ -11,7 +11,7 @@
                     {
                         "description": "What is Mosaic Theory?",
                         "props": {
-                            "use_semantic_captions": false
+                            "use_semantic_captions": true
                         },
                         "title": "Search Query"
                     },
