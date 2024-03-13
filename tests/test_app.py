@@ -376,7 +376,7 @@ async def test_chat_prompt_template_concat(client, snapshot):
         json={
             "messages": [{"content": "What is Mosaic Theory?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Meow like a cat."},
+                "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Discuss an Ethics Case."},
             },
         },
     )
