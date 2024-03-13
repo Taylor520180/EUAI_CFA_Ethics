@@ -14,7 +14,7 @@
                         "title": "Original user query"
                     },
                     {
-                        "description": "Mosaic Theory",
+                        "description": null,
                         "props": {
                             "has_vector": false,
                             "use_semantic_captions": false
