@@ -16,7 +16,7 @@
                     {
                         "description": "Mosaic Theory",
                         "props": {
-                            "has_vector": true,
+                            "has_vector": false,
                             "use_semantic_captions": false
                         },
                         "title": "Generated search query"
