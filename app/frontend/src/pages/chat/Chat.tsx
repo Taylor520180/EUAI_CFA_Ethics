@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -23,6 +23,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
@@ -32,6 +33,9 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [temperature, setTemperature] = useState<number>(0.3);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
+    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -59,12 +63,20 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
+    const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
+    const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
 
     const getConfig = async () => {
-        const token = client ? await getToken(client) : undefined;
-
-        configApi(token).then(config => {
+        configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
+            setUseSemanticRanker(config.showSemanticRankerOption);
+            setShowSemanticRankerOption(config.showSemanticRankerOption);
+            setShowVectorOption(config.showVectorOption);
+            if (!config.showVectorOption) {
+                setRetrievalMode(RetrievalMode.Text);
+            }
+            setShowUserUpload(config.showUserUpload);
         });
     };
 
@@ -90,7 +102,7 @@ const Chat = () => {
             for await (const event of readNDJSONStream(responseBody)) {
                 if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
                     event["choices"][0]["message"] = event["choices"][0]["delta"];
-                    askResponse = event;
+                    askResponse = event as ChatAppResponse;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["choices"][0]["delta"]["content"]);
@@ -137,6 +149,9 @@ const Chat = () => {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
+                        temperature: temperature,
+                        minimum_reranker_score: minimumRerankerScore,
+                        minimum_search_score: minimumSearchScore,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -192,6 +207,22 @@ const Chat = () => {
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
+    };
+
+    const onTemperatureChange = (
+        newValue: number,
+        range?: [number, number],
+        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
+    ) => {
+        setTemperature(newValue);
+    };
+
+    const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumSearchScore(parseFloat(newValue || "0"));
+    };
+
+    const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumRerankerScore(parseFloat(newValue || "0"));
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -255,6 +286,7 @@ const Chat = () => {
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
@@ -365,6 +397,37 @@ const Chat = () => {
                         onChange={onPromptTemplateChange}
                     />
 
+                    <Slider
+                        className={styles.chatSettingsSeparator}
+                        label="Temperature"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature}
+                        onChange={onTemperatureChange}
+                        showValue
+                        snapToStep
+                    />
+
+                    <SpinButton
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum search score"
+                        min={0}
+                        step={0.01}
+                        defaultValue={minimumSearchScore.toString()}
+                        onChange={onMinimumSearchScoreChange}
+                    />
+
+                    <SpinButton
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum reranker score"
+                        min={1}
+                        max={4}
+                        step={0.1}
+                        defaultValue={minimumRerankerScore.toString()}
+                        onChange={onMinimumRerankerScoreChange}
+                    />
+
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Retrieve this many search results:"
@@ -374,12 +437,15 @@ const Chat = () => {
                         onChange={onRetrieveCountChange}
                     />
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
+
+                    {showSemanticRankerOption && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticRanker}
+                            label="Use semantic ranker for retrieval"
+                            onChange={onUseSemanticRankerChange}
+                        />
+                    )}
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSemanticCaptions}
@@ -405,11 +471,14 @@ const Chat = () => {
                         />
                     )}
 
-                    <VectorSettings
-                        showImageOptions={useGPT4V && showGPT4VOptions}
-                        updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                        updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
-                    />
+                    {showVectorOption && (
+                        <VectorSettings
+                            defaultRetrievalMode={retrievalMode}
+                            showImageOptions={useGPT4V && showGPT4VOptions}
+                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                        />
+                    )}
 
                     {useLogin && (
                         <Checkbox

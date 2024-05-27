@@ -30,18 +30,24 @@ filtered_response = BadRequestError(
     ),
 )
 
+contextlength_response = BadRequestError(
+    message="This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+    body={
+        "message": "This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+        "code": "context_length_exceeded",
+        "status": 400,
+    },
+    response=Response(400, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "429"}}),
+)
 
-def thoughts_contains_text(thoughts, text):
-    found = False
-    for thought in thoughts:
-        description = thought["description"]
-        if isinstance(description, str) and text in description:
-            found = True
-            break
-        elif isinstance(description, list) and any(text in item for item in description):
-            found = True
-            break
-    return found
+
+def thought_contains_text(thought, text):
+    description = thought["description"]
+    if isinstance(description, str) and text in description:
+        return True
+    elif isinstance(description, list) and any(text in item for item in description):
+        return True
+    return False
 
 
 @pytest.mark.asyncio
@@ -58,6 +64,20 @@ async def test_missing_env_vars():
 async def test_index(client):
     response = await client.get("/")
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_redirect(client):
+    response = await client.get("/redirect")
+    assert response.status_code == 200
+    assert (await response.get_data()) == b""
+
+
+@pytest.mark.asyncio
+async def test_favicon(client):
+    response = await client.get("/favicon.ico")
+    assert response.status_code == 200
+    assert response.content_type == "image/vnd.microsoft.icon"
 
 
 @pytest.mark.asyncio
@@ -116,6 +136,26 @@ async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot,
 
 
 @pytest.mark.asyncio
+async def test_ask_handle_exception_contextlength(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=contextlength_response),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "Super long message with lots of sources.", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert (
+        "Exception in /ask: This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages."
+        in caplog.text
+    )
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
@@ -152,6 +192,32 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_rtr_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/ask",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
@@ -316,6 +382,32 @@ async def test_chat_text_filter(auth_client, snapshot):
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")

@@ -11,9 +11,13 @@
                     {
                         "description": "What is Mosaic Theory?",
                         "props": {
-                            "use_semantic_captions": false
+                            "filter": null,
+                            "has_vector": false,
+                            "top": 3,
+                            "use_semantic_captions": false,
+                            "use_semantic_ranker": null
                         },
-                        "title": "Search Query"
+                        "title": "Search using user query"
                     },
                     {
                         "description": [
@@ -32,12 +36,14 @@
                                 "id": "file-Ethics Handbook_pdf-42656E656669745F4F7074696F6E732E706466-page-76",
                                 "imageEmbedding": null,
                                 "oids": null,
+                                "reranker_score": 3.4577205181121826,
+                                "score": 0.03279569745063782,
                                 "sourcefile": "Ethics Handbook.pdf.pdf",
                                 "sourcepage": "Ethics Handbook.pdf-76.pdf"
                             }
                         ],
                         "props": null,
-                        "title": "Results"
+                        "title": "Search results"
                     },
                     {
                         "description": [
@@ -46,13 +52,16 @@
                             "{'role': 'assistant', 'content': 'Good questions! Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation.'}",
                             "{'role': 'user', 'content': 'What is Mosaic Theory?\\nSources:\\n Ethics Handbook-76.pdf: Under Mosaic Theory, the analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions.'}"
                         ],
-                        "props": null,
-                        "title": "Prompt"
+                        "props": {
+                            "model": "gpt-35-turbo"
+                        },
+                        "title": "Prompt to generate answer"
                     }
                 ]
             },
             "finish_reason": "stop",
             "index": 0,
+            "logprobs": null,
             "message": {
                 "content": "Good questions! Based on Mosaic Theory, a financial analyst may use significant conclusions derived from the analysis of public and nonmaterial nonpublic information as the basis for investment recommendations and decisions even if those conclusions would have been material inside information had they been communicated directly to the analyst by a company. Under the Mosaic Theory, financial analysts are free to act on this collection, or mosaic, of information without risking violation.",
                 "function_call": null,

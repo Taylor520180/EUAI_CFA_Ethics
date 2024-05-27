@@ -59,3 +59,4 @@ def test_get_oai_chatmodel_tiktok_error():
         get_oai_chatmodel_tiktok(None)
     with pytest.raises(ValueError, match="Expected Azure OpenAI ChatGPT model name"):
         get_oai_chatmodel_tiktok("gpt-3")
+

@@ -5,9 +5,18 @@ import logging
 from typing import Any, Optional
 
 import aiohttp
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
+from jose import jwt
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
+from tenacity import (
+    AsyncRetrying,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed or there is an authentication error accessing the graph API
@@ -32,6 +41,8 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
+        enable_global_documents: bool = False,
+        enable_unauthenticated_access: bool = False,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -39,23 +50,37 @@ class AuthenticationHelper:
         self.client_app_id = client_app_id
         self.tenant_id = tenant_id
         self.authority = f"https://login.microsoftonline.com/{tenant_id}"
+        # Depending on if requestedAccessTokenVersion is 1 or 2, the issuer and audience of the token may be different
+        # See https://learn.microsoft.com/graph/api/resources/apiapplication
+        self.valid_issuers = [
+            f"https://sts.windows.net/{tenant_id}/",
+            f"https://login.microsoftonline.com/{tenant_id}/v2.0",
+        ]
+        self.valid_audiences = [f"api://{server_app_id}", str(server_app_id)]
+        # See https://learn.microsoft.com/entra/identity-platform/access-tokens#validate-the-issuer for more information on token validation
+        self.key_url = f"{self.authority}/discovery/v2.0/keys"
 
         if self.use_authentication:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
+            self.enable_global_documents = enable_global_documents
+            self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.has_auth_fields = False
             self.require_access_control = False
+            self.enable_global_documents = True
+            self.enable_unauthenticated_access = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
-            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to use the application
+            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to access documents with access control lists
+            "enableUnauthenticatedAccess": self.enable_unauthenticated_access,  # Whether or not the user can access the app without login
             "msalConfig": {
                 "auth": {
                     "clientId": self.client_app_id,  # Client app id used for login
@@ -89,7 +114,7 @@ class AuthenticationHelper:
     @staticmethod
     def get_token_auth_header(headers: dict) -> str:
         # Obtains the Access Token from the Authorization Header
-        auth = headers.get("Authorization", None)
+        auth = headers.get("Authorization")
         if auth:
             parts = auth.split()
 
@@ -105,7 +130,7 @@ class AuthenticationHelper:
 
         # App services built-in authentication passes the access token directly as a header
         # To learn more, please visit https://learn.microsoft.com/azure/app-service/configure-authentication-oauth-tokens
-        token = headers.get("x-ms-token-aad-access-token", None)
+        token = headers.get("x-ms-token-aad-access-token")
         if token:
             return token
 
@@ -124,25 +149,32 @@ class AuthenticationHelper:
             )
 
         oid_security_filter = (
-            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
+            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid", "")) if use_oid_security_filter else None
         )
         groups_security_filter = (
-            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups") or []))
+            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups", [])))
             if use_groups_security_filter
             else None
         )
 
-        # If only one security filter is specified, return that filter
+        # If only one security filter is specified, use that filter
         # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
         # If no security filters are specified, don't return any filter
+        security_filter = None
         if oid_security_filter and not groups_security_filter:
-            return oid_security_filter
+            security_filter = f"{oid_security_filter}"
         elif groups_security_filter and not oid_security_filter:
-            return groups_security_filter
+            security_filter = f"{groups_security_filter}"
         elif oid_security_filter and groups_security_filter:
-            return f"({oid_security_filter} or {groups_security_filter})"
-        else:
-            return None
+            security_filter = f"({oid_security_filter} or {groups_security_filter})"
+
+        # If global documents are allowed, append the public global filter
+        if self.enable_global_documents:
+            global_documents_filter = "(not oids/any() and not groups/any())"
+            if security_filter:
+                security_filter = f"({security_filter} or {global_documents_filter})"
+
+        return security_filter
 
     @staticmethod
     async def list_groups(graph_resource_access_token: dict) -> list[str]:
@@ -181,6 +213,11 @@ class AuthenticationHelper:
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
             # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
             auth_token = AuthenticationHelper.get_token_auth_header(headers)
+            # Validate the token before use
+            await self.validate_access_token(auth_token)
+
+            # Use the on-behalf-of-flow to acquire another token for use with Microsoft Graph
+            # See https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow for more information
             graph_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
                 user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"]
             )
@@ -190,7 +227,7 @@ class AuthenticationHelper:
             # Read the claims from the response. The oid and groups claims are used for security filtering
             # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
             id_token_claims = graph_resource_access_token["id_token_claims"]
-            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups") or []}
+            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
 
             # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
             # or a groups overage claim may have been emitted.
@@ -206,13 +243,112 @@ class AuthenticationHelper:
                 auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
             return auth_claims
         except AuthError as e:
-            print(e.error)
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
-            if self.require_access_control:
+            if self.require_access_control and not self.enable_unauthenticated_access:
                 raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
-            if self.require_access_control:
+            if self.require_access_control and not self.enable_unauthenticated_access:
                 raise
             return {}
+
+    async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
+        # Start with the standard security filter for all queries
+        security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
+        # If there was no security filter or no path, then the path is allowed
+        if not security_filter or len(path) == 0:
+            return True
+
+        # Remove any fragment string from the path before checking
+        fragment_index = path.find("#")
+        if fragment_index != -1:
+            path = path[:fragment_index]
+
+        # Filter down to only chunks that are from the specific source file
+        # Sourcepage is used for GPT-4V
+        # Replace ' with '' to escape the single quote for the filter
+        # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
+        path_for_filter = path.replace("'", "''")
+        filter = f"{security_filter} and ((sourcefile eq '{path_for_filter}') or (sourcepage eq '{path_for_filter}'))"
+
+        # If the filter returns any results, the user is allowed to access the document
+        # Otherwise, access is denied
+        results = await search_client.search(search_text="*", top=1, filter=filter)
+        allowed = False
+        async for _ in results:
+            allowed = True
+            break
+
+        return allowed
+
+    # See https://github.com/Azure-Samples/ms-identity-python-on-behalf-of/blob/939be02b11f1604814532fdacc2c2eccd198b755/FlaskAPI/helpers/authorization.py#L44
+    async def validate_access_token(self, token: str):
+        """
+        Validate an access token is issued by Entra
+        """
+        jwks = None
+        async for attempt in AsyncRetrying(
+            retry=retry_if_exception_type(AuthError),
+            wait=wait_random_exponential(min=15, max=60),
+            stop=stop_after_attempt(5),
+        ):
+            with attempt:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url=self.key_url) as resp:
+                        resp_status = resp.status
+                        if resp_status in [500, 502, 503, 504]:
+                            raise AuthError(
+                                error=f"Failed to get keys info: {await resp.text()}", status_code=resp_status
+                            )
+                        jwks = await resp.json()
+
+        if not jwks or "keys" not in jwks:
+            raise AuthError({"code": "invalid_keys", "description": "Unable to get keys to validate auth token."}, 401)
+
+        rsa_key = None
+        issuer = None
+        audience = None
+        try:
+            unverified_header = jwt.get_unverified_header(token)
+            unverified_claims = jwt.get_unverified_claims(token)
+            issuer = unverified_claims.get("iss")
+            audience = unverified_claims.get("aud")
+            for key in jwks["keys"]:
+                if key["kid"] == unverified_header["kid"]:
+                    rsa_key = {"kty": key["kty"], "kid": key["kid"], "use": key["use"], "n": key["n"], "e": key["e"]}
+                    break
+        except Exception as exc:
+            raise AuthError(
+                {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
+            ) from exc
+        if not rsa_key:
+            raise AuthError({"code": "invalid_header", "description": "Unable to find appropriate key"}, 401)
+
+        if issuer not in self.valid_issuers:
+            raise AuthError(
+                {"code": "invalid_header", "description": f"Issuer {issuer} not in {','.join(self.valid_issuers)}"}, 401
+            )
+
+        if audience not in self.valid_audiences:
+            raise AuthError(
+                {
+                    "code": "invalid_header",
+                    "description": f"Audience {audience} not in {','.join(self.valid_audiences)}",
+                },
+                401,
+            )
+
+        try:
+            jwt.decode(token, rsa_key, algorithms=["RS256"], audience=audience, issuer=issuer)
+        except ExpiredSignatureError as jwt_expired_exc:
+            raise AuthError({"code": "token_expired", "description": "token is expired"}, 401) from jwt_expired_exc
+        except JWTClaimsError as jwt_claims_exc:
+            raise AuthError(
+                {"code": "invalid_claims", "description": "incorrect claims," "please check the audience and issuer"},
+                401,
+            ) from jwt_claims_exc
+        except Exception as exc:
+            raise AuthError(
+                {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
+            ) from exc

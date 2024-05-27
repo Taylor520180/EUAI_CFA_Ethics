@@ -4,6 +4,7 @@ param location string = resourceGroup().location
 param tags object = {}
 @description('The custom subdomain name used to access the API. Defaults to the value of the name parameter.')
 param customSubDomainName string = name
+param disableLocalAuth bool = false
 param deployments array = []
 param kind string = 'OpenAI'
 
@@ -12,16 +13,20 @@ param publicNetworkAccess string = 'Enabled'
 param sku object = {
   name: 'S0'
 }
+param ipRules array = []
+@allowed([ 'None', 'AzureServices' ])
+param bypass string = 'None'
 
-param allowedIpRules array = []
-param networkAcls object = empty(allowedIpRules) ? {
+var networkAcls = {
   defaultAction: 'Allow'
-} : {
-  ipRules: allowedIpRules
-  defaultAction: 'Deny'
 }
 
-resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+var networkAclsWithBypass = {
+  defaultAction: 'Allow'
+  bypass: bypass
+}
+
+resource account 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
   name: name
   location: location
   tags: tags
@@ -29,7 +34,9 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
-    networkAcls: networkAcls
+    // Document Intelligence (FormRecognizer) does not support bypass in network acls
+    networkAcls: kind == 'FormRecognizer' ? networkAcls : networkAclsWithBypass
+    disableLocalAuth: disableLocalAuth
   }
   sku: sku
 }

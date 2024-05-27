@@ -1,34 +1,23 @@
 import json
-import logging
 import re
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional, Union
 
-from openai.types.chat import (
-    ChatCompletion,
-    ChatCompletionContentPartParam,
-    ChatCompletionMessageParam,
-)
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
-from core.messagebuilder import MessageBuilder
 
 
 class ChatApproach(Approach, ABC):
-    # Chat roles
-    SYSTEM = "system"
-    USER = "user"
-    ASSISTANT = "assistant"
-
-    query_prompt_few_shots = [
-        {"role": USER, "content": "What is Mosaic Theory?"},
-        {"role": ASSISTANT, "content": "Good question! Mosaic Theory refers to .... In summary, Mosaic Theory is about..."},
-        {"role": USER, "content": "Can you show me an example related to Mosaic Theory?"},
-        {"role": ASSISTANT, "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report."},
-        {"role": USER, "content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?"},
-        {"role": ASSISTANT, "content": "Sure! Ready for the challenge?\n\nUnder the Code and Standards, which of the following investment risks is least likely required to be disclosed to clients?\nAnswer Choices:\nA. the use of leverage as part of the investment strategy.\nB. risks that are unknown to the investment adviser at the time of the recommendation.\nC.general market-related risks.\"\n\nWhich is the correct answer?"},
-        {"role": USER, "content": "I still don't understand."},
-        {"role": ASSISTANT, "content": "No worries! Let me give you a more concrete example to make it clearer. Imaging. you are .... Does it sound clear to you now? Free to ask if you have more questions."},
+    query_prompt_few_shots: list[ChatCompletionMessageParam] = [
+        {"role": "user", "content": "What is Mosaic Theory?"},
+        {"role": "assistant", "content": "Good question! Mosaic Theory refers to .... In summary, Mosaic Theory is about..."},
+        {"role": "user", "content": "Can you show me an example related to Mosaic Theory?"},
+        {"role": "assistant", "content": "Of course! Let's see this example:\n\nRoger Clement is a senior financial analyst who specializes in the European automobile sector at Rivoli Capital....\n\nAnalysis: to reach a conclusion about the value of the company, Clement has pieced together a number of nonmaterial or public bits of information that affect Turgot Chariots. Therefore, under the mosaic theory, Clement has not violated Standard II(A) in drafting the report."},
+        {"role": "user", "content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?"},
+        {"role": "assistant", "content": "Sure! Ready for the challenge?\n\nUnder the Code and Standards, which of the following investment risks is least likely required to be disclosed to clients?\nAnswer Choices:\nA. the use of leverage as part of the investment strategy.\nB. risks that are unknown to the investment adviser at the time of the recommendation.\nC.general market-related risks.\"\n\nWhich is the correct answer?"},
+        {"role": "user", "content": "I still don't understand."},
+        {"role": "assistant", "content": "No worries! Let me give you a more concrete example to make it clearer. Imaging. you are .... Does it sound clear to you now? Free to ask if you have more questions."},
     ]
     NO_RESPONSE = "0"
 
@@ -41,7 +30,7 @@ class ChatApproach(Approach, ABC):
     Make sure the last question ends with ">>".
     """
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge.
+    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
     You have access to Azure AI Search index with 100's of documents.
     Generate a search query based on the conversation and the new question.
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
@@ -57,7 +46,7 @@ class ChatApproach(Approach, ABC):
         pass
 
     @abstractmethod
-    async def run_until_final_call(self, history, overrides, auth_claims, should_stream) -> tuple:
+    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
     def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str) -> str:
@@ -74,12 +63,17 @@ class ChatApproach(Approach, ABC):
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
-        if function_call := response_message.function_call:
-            if function_call.name == "search_sources":
-                arg = json.loads(function_call.arguments)
-                search_query = arg.get("search_query", self.NO_RESPONSE)
-                if search_query != self.NO_RESPONSE:
-                    return search_query
+
+        if response_message.tool_calls:
+            for tool in response_message.tool_calls:
+                if tool.type != "function":
+                    continue
+                function = tool.function
+                if function.name == "search_sources":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        return search_query
         elif query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
@@ -88,45 +82,15 @@ class ChatApproach(Approach, ABC):
     def extract_followup_questions(self, content: str):
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
 
-    def get_messages_from_history(
-        self,
-        system_prompt: str,
-        model_id: str,
-        history: list[dict[str, str]],
-        user_content: Union[str, list[ChatCompletionContentPartParam]],
-        max_tokens: int,
-        few_shots=[],
-    ) -> list[ChatCompletionMessageParam]:
-        message_builder = MessageBuilder(system_prompt, model_id)
-
-        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
-        for shot in reversed(few_shots):
-            message_builder.insert_message(shot.get("role"), shot.get("content"))
-
-        append_index = len(few_shots) + 1
-
-        message_builder.insert_message(self.USER, user_content, index=append_index)
-        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1]))  # type: ignore
-
-        newest_to_oldest = list(reversed(history[:-1]))
-        for message in newest_to_oldest:
-            potential_message_count = message_builder.count_tokens_for_message(message)
-            if (total_token_count + potential_message_count) > max_tokens:
-                logging.info("Reached max tokens of %d, history will be truncated", max_tokens)
-                break
-            message_builder.insert_message(message["role"], message["content"], index=append_index)
-            total_token_count += potential_message_count
-        return message_builder.messages
-
     async def run_without_streaming(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
     ) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(
-            history, overrides, auth_claims, should_stream=False
+            messages, overrides, auth_claims, should_stream=False
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
         chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
@@ -140,18 +104,18 @@ class ChatApproach(Approach, ABC):
 
     async def run_with_streaming(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
     ) -> AsyncGenerator[dict, None]:
         extra_info, chat_coroutine = await self.run_until_final_call(
-            history, overrides, auth_claims, should_stream=True
+            messages, overrides, auth_claims, should_stream=True
         )
         yield {
             "choices": [
                 {
-                    "delta": {"role": self.ASSISTANT},
+                    "delta": {"role": "assistant"},
                     "context": extra_info,
                     "session_state": session_state,
                     "finish_reason": None,
@@ -186,7 +150,7 @@ class ChatApproach(Approach, ABC):
             yield {
                 "choices": [
                     {
-                        "delta": {"role": self.ASSISTANT},
+                        "delta": {"role": "assistant"},
                         "context": {"followup_questions": followup_questions},
                         "finish_reason": None,
                         "index": 0,
@@ -196,7 +160,11 @@ class ChatApproach(Approach, ABC):
             }
 
     async def run(
-        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+        self,
+        messages: list[ChatCompletionMessageParam],
+        stream: bool = False,
+        session_state: Any = None,
+        context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})

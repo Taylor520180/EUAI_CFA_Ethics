@@ -47,3 +47,4 @@ def test_messagebuilder_unicode_append():
     assert builder.model == "gpt-35-turbo-16k"
     assert builder.count_tokens_for_message(builder.messages[0]) == 4
     assert builder.count_tokens_for_message(builder.messages[1]) == 4
+
