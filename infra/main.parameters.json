@@ -89,28 +89,28 @@
     "backendServiceName": {
       "value": "${AZURE_APP_SERVICE}"
     },
-    "chatGptModelName":{
+    "chatGptModelName": {
       "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
     },
-    "chatGptDeploymentVersion":{
+    "chatGptDeploymentVersion": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
     },
-    "chatGptDeploymentCapacity":{
+    "chatGptDeploymentCapacity": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
     },
-    "embeddingModelName":{
+    "embeddingModelName": {
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
     },
-    "embeddingDeploymentVersion":{
+    "embeddingDeploymentVersion": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
-    "embeddingDeploymentCapacity":{
+    "embeddingDeploymentCapacity": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
     "embeddingDimensions": {
@@ -119,10 +119,10 @@
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
-    "azureOpenAiCustomUrl":{
+    "azureOpenAiCustomUrl": {
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
-    "azureOpenAiApiVersion":{
+    "azureOpenAiApiVersion": {
       "value": "${AZURE_OPENAI_API_VERSION}"
     },
     "openAiApiKey": {

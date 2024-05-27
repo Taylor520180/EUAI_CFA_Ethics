@@ -4,10 +4,10 @@ This guide includes advanced topics that are not necessary for a basic deploymen
 
 [📺 Watch: Deployment of your chat app](https://www.youtube.com/watch?v=mDFZdmn7nhk)
 
-* [How does `azd up` work?](#how-does-azd-up-work)
-* [Configuring continuous deployment](#configuring-continuous-deployment)
-  * [GitHub actions](#github-actions)
-  * [Azure DevOps](#azure-devops)
+- [How does `azd up` work?](#how-does-azd-up-work)
+- [Configuring continuous deployment](#configuring-continuous-deployment)
+  - [GitHub actions](#github-actions)
+  - [Azure DevOps](#azure-devops)
 
 ## How does `azd up` work?
 

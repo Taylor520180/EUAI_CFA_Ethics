@@ -40,16 +40,12 @@ export const Answer = ({
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
-                    
                 </Stack>
             </Stack.Item>
 
             <Stack.Item grow>
                 <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div>
             </Stack.Item>
-
-         
-           
         </Stack>
     );
 };

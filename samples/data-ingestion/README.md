@@ -2,18 +2,19 @@
 name: ChatGPT + Enterprise data + data ingestion
 description: Prepare your documents for a RAG chat app by ingesting them into Azure AI Search using either a Python script or integrated vectorization.
 languages:
-- python
-- typescript
-- bicep
-- azdeveloper
+  - python
+  - typescript
+  - bicep
+  - azdeveloper
 products:
-- azure-openai
-- azure-cognitive-search
-- azure-app-service
-- azure
+  - azure-openai
+  - azure-cognitive-search
+  - azure-app-service
+  - azure
 page_type: sample
 urlFragment: azure-search-openai-demo-data-ingestion
 ---
+
 <!-- Original document: /docs/data_ingestion.md -->
 
 # Indexing documents for the Chat App
@@ -36,15 +37,15 @@ This guide provides more details for using the `prepdocs` script to index docume
 
 In order to ingest a document format, we need a tool that can turn it into text. By default, use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
 
-| Format | Manual indexing                      | Integrated Vectorization |
-| ------ | ------------------------------------ | ------------------------ |
-| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
-| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
-| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
-| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
-| TXT    | Yes (Local)                          | Yes                      |
-| JSON   | Yes (Local)                          | Yes                      |
-| CSV    | Yes (Local)                          | Yes                      |
+| Format                              | Manual indexing                      | Integrated Vectorization |
+| ----------------------------------- | ------------------------------------ | ------------------------ |
+| PDF                                 | Yes (DI or local with PyPDF)         | Yes                      |
+| HTML                                | Yes (DI or local with BeautifulSoup) | Yes                      |
+| DOCX, PPTX, XLSX                    | Yes (DI)                             | Yes                      |
+| Images (JPG, PNG, BPM, TIFF, HEIFF) | Yes (DI)                             | Yes                      |
+| TXT                                 | Yes (Local)                          | Yes                      |
+| JSON                                | Yes (Local)                          | Yes                      |
+| CSV                                 | Yes (Local)                          | Yes                      |
 
 The Blob indexer used by the Integrated Vectorization approach also supports a few [additional formats](https://learn.microsoft.com/azure/search/search-howto-indexing-azure-blob-storage#supported-document-formats).
 

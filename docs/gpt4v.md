@@ -16,16 +16,16 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 - Create a [Computer Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
 - The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select:
 
-   | Model | Version |
-   |--|--|
-   |`gpt-4`|`vision-preview`|
+  | Model   | Version          |
+  | ------- | ---------------- |
+  | `gpt-4` | `vision-preview` |
 
 - Ensure that you can deploy the Azure OpenAI resource group in [a region where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
-    - Azure OpenAI models
-        - gpt-35-turbo
-        - text-embedding-ada-002
-        - gpt-4v
-    - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
+  - Azure OpenAI models
+    - gpt-35-turbo
+    - text-embedding-ada-002
+    - gpt-4v
+  - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Setup and Usage
 
@@ -34,7 +34,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 
 2. **Enable GPT-4 Turbo with Vision:**
 
-   First, make sure you do *not* have integrated vectorization enabled, since that is currently incompatible:
+   First, make sure you do _not_ have integrated vectorization enabled, since that is currently incompatible:
 
    ```shell
    azd env set USE_FEATURE_INT_VECTORIZATION false
@@ -54,9 +54,8 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 4. **Start the application:**
    Execute `azd up` to build, provision, deploy, and initiate document preparation.
 
-
 5. **Web Application Usage:**
-    ![GPT4V configuration screenshot](./images/gpt4v.png)
+   ![GPT4V configuration screenshot](./images/gpt4v.png)
    - Access the developer options in the web app and select "Use GPT-4 Turbo with Vision".
    - Sample questions will be updated for testing.
    - Interact with the questions to view responses.

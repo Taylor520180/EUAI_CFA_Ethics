@@ -1,6 +1,6 @@
 # Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
@@ -35,8 +35,8 @@ If you find a bug in the source code or a mistake in the documentation, you can 
 
 ## Want a Feature?
 
-You can *request* a new feature by [submitting an issue](#submitting-an-issue) to the GitHub
-Repository. If you would like to *implement* a new feature, please submit an issue with
+You can _request_ a new feature by [submitting an issue](#submitting-an-issue) to the GitHub
+Repository. If you would like to _implement_ a new feature, please submit an issue with
 a proposal for your work first, to be sure that we can use it.
 
 - **Small Features** can be crafted and directly [submitted as a Pull Request](#submitting-a-pull-request-pr).
@@ -49,7 +49,7 @@ Before you submit an issue, search the archive, maybe your question was already 
 
 If your issue appears to be a bug, and hasn't been reported, open a new issue.
 Help us to maximize the effort we can spend fixing issues and adding new
-features, by not reporting duplicate issues.  Providing the following information will increase the
+features, by not reporting duplicate issues. Providing the following information will increase the
 chances of your issue being dealt with quickly:
 
 - **Overview of the Issue** - if an error is being thrown a non-minified stack trace helps

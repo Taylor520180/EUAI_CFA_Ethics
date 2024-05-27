@@ -36,10 +36,9 @@ You should see:
   ➜  press h to show help
 ```
 
-Navigate to the URL shown in the terminal (in this case, `http://localhost:5173/`).  This local server will watch and reload frontend files. All backend requests will be routed to the Python server according to `vite.config.ts`.
+Navigate to the URL shown in the terminal (in this case, `http://localhost:5173/`). This local server will watch and reload frontend files. All backend requests will be routed to the Python server according to `vite.config.ts`.
 
 Then, whenever you make changes to frontend files, the changes will be automatically reloaded, without any browser refresh needed.
-
 
 ## Using a local OpenAI-compatible API
 

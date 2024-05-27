@@ -2,7 +2,6 @@
 
 <!-- Describe the intention of the changes being proposed. What problem does it solve or functionality does it add? -->
 
-
 ## Does this introduce a breaking change?
 
 When developers merge from main and run the server, azd up, or azd deploy, will this produce an error?

@@ -4,10 +4,10 @@ This sample is designed to be a starting point for your own production applicati
 but you should do a thorough review of the security and performance before deploying
 to production. Here are some things to consider:
 
-* [Azure resource configuration](#azure-resource-configuration)
-* [Additional security measures](#additional-security-measures)
-* [Load testing](#load-testing)
-* [Evaluation](#evaluation)
+- [Azure resource configuration](#azure-resource-configuration)
+- [Additional security measures](#additional-security-measures)
+- [Load testing](#load-testing)
+- [Evaluation](#evaluation)
 
 ## Azure resource configuration
 
@@ -22,11 +22,11 @@ to understand how much capacity you have.
 
 If the maximum TPM isn't enough for your expected load, you have a few options:
 
-* Use a backoff mechanism to retry the request. This is helpful if you're running into a short-term quota due to bursts of activity but aren't over long-term quota. The [tenacity](https://tenacity.readthedocs.io/en/latest/) library is a good option for this, and this [pull request](https://github.com/Azure-Samples/azure-search-openai-demo/pull/500) shows how to apply it to this app.
+- Use a backoff mechanism to retry the request. This is helpful if you're running into a short-term quota due to bursts of activity but aren't over long-term quota. The [tenacity](https://tenacity.readthedocs.io/en/latest/) library is a good option for this, and this [pull request](https://github.com/Azure-Samples/azure-search-openai-demo/pull/500) shows how to apply it to this app.
 
-* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management or container-based load balancers. For seamless integration instructions with this sample, please check:
-  * [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
-  * [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
+- If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management or container-based load balancers. For seamless integration instructions with this sample, please check:
+  - [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
+  - [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
 
 ### Azure Storage
 
@@ -56,10 +56,10 @@ and scale up the maximum/minimum based on load.
 
 ## Additional security measures
 
-* **Authentication**: By default, the deployed app is publicly accessible.
+- **Authentication**: By default, the deployed app is publicly accessible.
   We recommend restricting access to authenticated users.
   See [Enabling authentication](./deploy_features.md#enabling-authentication) to learn how to enable authentication.
-* **Networking**: We recommend [deploying inside a Virtual Network](./deploy_private.md). If the app is only for
+- **Networking**: We recommend [deploying inside a Virtual Network](./deploy_private.md). If the app is only for
   internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
   for firewalls and other forms of protection.
   For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
@@ -91,7 +91,7 @@ locust ChatUser
 Open the locust UI at [http://localhost:8089/](http://localhost:8089/), the URI displayed in the terminal.
 
 Start a new test with the URI of your website, e.g. `https://my-chat-app.azurewebsites.net`.
-Do *not* end the URI with a slash. You can start by pointing at your localhost if you're concerned
+Do _not_ end the URI with a slash. You can start by pointing at your localhost if you're concerned
 more about load on OpenAI/AI Search than the host platform.
 
 For the number of users and spawn rate, we recommend starting with 20 users and 1 users/second.
