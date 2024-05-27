@@ -41,7 +41,7 @@ def create_search_client():
 
 
 @pytest.mark.asyncio
-async def test_get_auth_claims_success(mock_confidential_client_success, mock_validate_token_success):
+async def test_get_auth_claims_success(mock_confidential_client_success: None, mock_validate_token_success: None):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert auth_claims.get("oid") == "OID_X"
@@ -49,7 +49,7 @@ async def test_get_auth_claims_success(mock_confidential_client_success, mock_va
 
 
 @pytest.mark.asyncio
-async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorized, mock_validate_token_success):
+async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorized: None, mock_validate_token_success: None):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert len(auth_claims.keys()) == 0
@@ -57,7 +57,7 @@ async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorize
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_overage_success(
-    mock_confidential_client_overage, mock_list_groups_success, mock_validate_token_success
+    mock_confidential_client_overage: None, mock_list_groups_success: None, mock_validate_token_success: None
 ):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
@@ -67,7 +67,7 @@ async def test_get_auth_claims_overage_success(
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_overage_unauthorized(
-    mock_confidential_client_overage, mock_list_groups_unauthorized, mock_validate_token_success
+    mock_confidential_client_overage: None, mock_list_groups_unauthorized: None, mock_validate_token_success: None
 ):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
@@ -75,39 +75,39 @@ async def test_get_auth_claims_overage_unauthorized(
 
 
 @pytest.mark.asyncio
-async def test_list_groups_success(mock_list_groups_success, mock_validate_token_success):
+async def test_list_groups_success(mock_list_groups_success: None, mock_validate_token_success: None):
     groups = await AuthenticationHelper.list_groups(graph_resource_access_token={"access_token": "MockToken"})
     assert groups == ["OVERAGE_GROUP_Y", "OVERAGE_GROUP_Z"]
 
 
 @pytest.mark.asyncio
-async def test_list_groups_unauthorized(mock_list_groups_unauthorized, mock_validate_token_success):
+async def test_list_groups_unauthorized(mock_list_groups_unauthorized: None, mock_validate_token_success: None):
     with pytest.raises(AuthError) as exc_info:
         await AuthenticationHelper.list_groups(graph_resource_access_token={"access_token": "MockToken"})
     assert exc_info.value.error == '{"error": "unauthorized"}'
 
 
-def test_auth_setup(mock_confidential_client_success, mock_validate_token_success, snapshot):
+def test_auth_setup(mock_confidential_client_success: None, mock_validate_token_success: None, snapshot):
     helper = create_authentication_helper()
     result = helper.get_auth_setup_for_client()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
-def test_auth_setup_required_access_control(mock_confidential_client_success, mock_validate_token_success, snapshot):
+def test_auth_setup_required_access_control(mock_confidential_client_success: None, mock_validate_token_success: None, snapshot):
     helper = create_authentication_helper(require_access_control=True)
     result = helper.get_auth_setup_for_client()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 def test_auth_setup_required_access_control_and_unauthenticated_access(
-    mock_confidential_client_success, mock_validate_token_success, snapshot
+    mock_confidential_client_success: None, mock_validate_token_success: None, snapshot
 ):
     helper = create_authentication_helper(require_access_control=True, enable_unauthenticated_access=True)
     result = helper.get_auth_setup_for_client()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
-def test_get_auth_token(mock_confidential_client_success, mock_validate_token_success):
+def test_get_auth_token(mock_confidential_client_success: None, mock_validate_token_success: None):
     with pytest.raises(AuthError) as exc_info:
         AuthenticationHelper.get_token_auth_header({})
     assert exc_info.value.status_code == 401
@@ -124,7 +124,7 @@ def test_get_auth_token(mock_confidential_client_success, mock_validate_token_su
     AuthenticationHelper.get_token_auth_header({"x-ms-token-aad-access-token": "MockToken"}) == "MockToken"
 
 
-def test_build_security_filters(mock_confidential_client_success, mock_validate_token_success):
+def test_build_security_filters(mock_confidential_client_success: None, mock_validate_token_success: None):
     auth_helper = create_authentication_helper()
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     auth_helper_enable_global_documents = create_authentication_helper(enable_global_documents=True)
@@ -230,7 +230,7 @@ def test_build_security_filters(mock_confidential_client_success, mock_validate_
 
 
 @pytest.mark.asyncio
-async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_success, mock_validate_token_success):
+async def test_check_path_auth_denied(monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
 
@@ -257,7 +257,7 @@ async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_succ
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_sourcepage(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
@@ -285,7 +285,7 @@ async def test_check_path_auth_allowed_sourcepage(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_sourcefile(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
@@ -313,7 +313,7 @@ async def test_check_path_auth_allowed_sourcefile(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_sourcefile(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
         require_access_control=True, enable_global_documents=True
@@ -343,7 +343,7 @@ async def test_check_path_auth_allowed_public_sourcefile(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_empty(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
@@ -368,7 +368,7 @@ async def test_check_path_auth_allowed_empty(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_empty(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
         require_access_control=True, enable_global_documents=True
@@ -395,7 +395,7 @@ async def test_check_path_auth_allowed_public_empty(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_fragment(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
@@ -423,7 +423,7 @@ async def test_check_path_auth_allowed_fragment(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_without_access_control(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper = create_authentication_helper(require_access_control=False)
     filter = None
@@ -452,7 +452,7 @@ async def test_check_path_auth_allowed_without_access_control(
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_without_access_control(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+    monkeypatch: pytest.MonkeyPatch, mock_confidential_client_success: None, mock_validate_token_success: None
 ):
     auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
         require_access_control=False, enable_global_documents=True
