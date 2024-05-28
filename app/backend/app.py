@@ -433,7 +433,7 @@ async def setup_clients():
 
         openai_client = AsyncAzureOpenAI(
             api_version=api_version,
-            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
