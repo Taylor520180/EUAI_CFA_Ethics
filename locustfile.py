@@ -20,7 +20,7 @@ class ChatUser(HttpUser):
                             [
                                 "What is Mosaic Theory?",
                                 "Can you show me case examples related to Mosaic Theory?",
-                                "Can you provide me with a quiz question related to Ethical Standard II(A) - Material Nonpublic Information?"",
+                                "Can you provide me with a quiz question related to Ethical Standard II(A) - Material Nonpublic Information?",
                                 "Can you give me one more quiz?",
                             ]
                         ),
@@ -55,7 +55,7 @@ class ChatUser(HttpUser):
                     },
                     {"content": "Can you provide me with a quiz related to Ethical Standard II(A) - Material Nonpublic Information?", "role": "user"},
                     {
-                        "content": "Sure! Ready for the challenge?\n\nUnder the Code and Standards, which of the following investment risks is least likely required to be disclosed to clients?\nAnswer Choices:\nA. the use of leverage as part of the investment strategy.\nB. risks that are unknown to the investment adviser at the time of the recommendation.\nC.general market-related risks.\"\n\nWhich is the correct answer?"",
+                        "content": "Sure! Ready for the challenge?\n\nUnder the Code and Standards, which of the following investment risks is least likely required to be disclosed to clients?\nAnswer Choices:\nA. the use of leverage as part of the investment strategy.\nB. risks that are unknown to the investment adviser at the time of the recommendation.\nC.general market-related risks.\"\n\nWhich is the correct answer?",
                         "role": "assistant",
                     },
                     {"content": "I still don't understand.", "role": "user"},

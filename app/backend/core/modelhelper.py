@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import tiktoken
-import os
-from openai import AzureOpenAI
 
 MODELS_2_TOKEN_LIMITS = {
     "gpt-35-turbo": 4000,
